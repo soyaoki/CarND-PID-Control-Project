@@ -9,6 +9,7 @@ PID::PID() {}
 
 PID::~PID() {}
 
+// Steerting controller
 void PID::Init(vector<double> p, bool opt_flg) {
   /**
    * TODO: Initialize PID coefficients (and errors, if needed)
@@ -112,31 +113,6 @@ void PID::Init(vector<double> p, bool opt_flg) {
   }
 }
 
-void PID::UpdateError(double cte) {
-  /**
-   * TODO: Update PID errors based on cte.
-   */
-  if (_1st_loop_flg)
-  {
-    p_error = cte;
-    _1st_loop_flg = false;
-  }
-  
-  d_error = cte - p_error; // d
-  p_error = cte; // p
-  i_error += cte; // i
-  
-  std::cout << "P_ERROR: " << p_error << ", I_ERROR: " << i_error << ", D_ERROR: " << d_error << std::endl;
-
-}
-
-double PID::Cal_controll_val() {
-  /**
-   * TODO: Calculate and return the total error
-   */
-  return -Kp * p_error - Ki * i_error - Kd * d_error;  // TODO: Add your total error calc here!
-}
-
 double PID::run(double best_err){
   // Initial parameters
   double x = 0.0;
@@ -218,6 +194,7 @@ double PID::run(double best_err){
   return total_error / n;
 }
 
+// Throttle controller
 void PID::Init_th(vector<double> p, bool opt_flg) {
   /**
    * TODO: Initialize PID coefficients (and errors, if needed)
@@ -371,8 +348,33 @@ double PID::run_th(double best_err){
   return total_error / n;
 }
 
+// Others
+void PID::UpdateError(double cte) {
+  /**
+   * TODO: Update PID errors based on cte.
+   */
+  if (_1st_loop_flg)
+  {
+    p_error = cte;
+    _1st_loop_flg = false;
+  }
+  
+  d_error = cte - p_error; // d
+  p_error = cte; // p
+  i_error += cte; // i
+  
+  std::cout << "P_ERROR: " << p_error << ", I_ERROR: " << i_error << ", D_ERROR: " << d_error << std::endl;
+
+}
+
+double PID::Cal_controll_val() {
+  /**
+   * TODO: Calculate and return the total error
+   */
+  return -Kp * p_error - Ki * i_error - Kd * d_error;  // TODO: Add your total error calc here!
+}
+
 // modulo operator
-double mod (double n, double M)
-{
+double mod (double n, double M){
   return std::fmod((std::fmod(n,M) + M), M);
 }
