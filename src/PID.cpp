@@ -14,6 +14,7 @@ void PID::Init(vector<double> p, bool opt_flg) {
   /**
    * TODO: Initialize PID coefficients (and errors, if needed)
    */
+  // Initialize params
   Kp = p[0];
   Ki = p[1];
   Kd = p[2];
@@ -22,7 +23,7 @@ void PID::Init(vector<double> p, bool opt_flg) {
   
   std::cout << "Kp: " << Kp << ", Ki: " << Ki << ", Kd: " << Kd << std::endl;
   
-  // Optimization
+  // Optimization by Twiddle
   if (opt_flg)
   {
     // Twiddling parameters
@@ -113,6 +114,7 @@ void PID::Init(vector<double> p, bool opt_flg) {
   }
 }
 
+// Steerting controller simulation
 double PID::run(double best_err){
   // Initial parameters
   double x = 0.0;
@@ -132,9 +134,12 @@ double PID::run(double best_err){
   double pi = 3.14159;
   double max_steering_angle = pi / 4.0;
   double pre_steer = 0.0;
+  double steering_drift = 10.0 * pi/180;
   vector<double> x_vec;
   vector<double> y_vec;
   vector<double> ori_vec;
+  std::random_device seed_gen;
+  std::default_random_engine engine(seed_gen());
   
   for (int i = 0; i < 2*n; i++)
   {
@@ -146,6 +151,9 @@ double PID::run(double best_err){
     
     // Calcurate steering angle
     double steer = - Kp * p_err - Ki * i_err - Kd * d_err;
+    std::normal_distribution<> dist(steer, 5.0*pi/180);
+    double steer_noise = dist(engine);
+    // steer = steer_noise + steering_drift;
     double d_steer = steer - pre_steer;
     pre_steer = steer;
     // if (steer > max_steering_angle) { steer = max_steering_angle; }
@@ -173,18 +181,25 @@ double PID::run(double best_err){
       y = cy - (cos(ori) * radius);
 //      std::cout << x << ", " << y << ", " << ori << ", " << radius << std::endl;
     }
-    if (i > n){
-      total_error += cte*cte + d_steer*d_steer + steer*steer;
+    if (i > n)
+    {    
+      // cost function design : minimize cross truck error, steer operation value and operation change
+      total_error += cte*cte + steer*steer + d_steer*d_steer;
     }
+    
+    // Add current x, y and orientation
     x_vec.push_back(x);
     y_vec.push_back(y);
     ori_vec.push_back(ori);
   }
+  // If best error update
   if ( best_err > (total_error / n ) )
   {
     std::cout << "  x  |  y  |  orientation" << std::endl;
+    // Loging
     std::ofstream log_file;
     log_file.open("optimized_params_res.csv");
+    // Display
     for (int i =0; i < x_vec.size(); i++)
     {
       std::cout << x_vec[i] << ", " << y_vec[i] << ", " << ori_vec[i] << std::endl;
@@ -196,9 +211,8 @@ double PID::run(double best_err){
 
 // Throttle controller
 void PID::Init_th(vector<double> p, bool opt_flg) {
-  /**
-   * TODO: Initialize PID coefficients (and errors, if needed)
-   */
+  
+  // Initialize params
   Kp = p[0];
   Ki = p[1];
   Kd = p[2];
@@ -207,7 +221,7 @@ void PID::Init_th(vector<double> p, bool opt_flg) {
   
   std::cout << "Kp: " << Kp << ", Ki: " << Ki << ", Kd: " << Kd << std::endl;
   
-  // Optimization
+  // Optimization by Twiddle
   if (opt_flg)
   {
     // Twiddling parameters
@@ -247,7 +261,7 @@ void PID::Init_th(vector<double> p, bool opt_flg) {
           // If best error updates
           std::cout << "Best Error: " << best_error << std::endl;
           std::cout << "total_error < best_error !" << std::endl;
-          // Update dp
+          // Update dp and best error
           dp[i] *= 1.1;
           best_error = total_error;
           // Update output value p_opt
@@ -267,7 +281,7 @@ void PID::Init_th(vector<double> p, bool opt_flg) {
             // If best error updates
             std::cout << "Best Error: " << best_error << std::endl;
             std::cout << "total_error < best_error !" << std::endl;
-            // Update dp
+            // Update dp and best error
             dp[i] *= 1.1;
             best_error = total_error;
             // Update output value p_opt
@@ -298,6 +312,7 @@ void PID::Init_th(vector<double> p, bool opt_flg) {
   }
 }
 
+// Throttle controller simulation
 double PID::run_th(double best_err){
   // Initial parameters
   double vel = 0.0;
@@ -308,9 +323,9 @@ double PID::run_th(double best_err){
   double i_err = 0.0;
   double d_err = 0.0;
   double total_error = 0.0;
-  double max_acc = 1.0;
-  double pre_acc = 0.0;
-  vector<double> acc_vec;
+  double max_throttle = 1.0;
+  double pre_throttle = 0.0;
+  vector<double> throttle_vec;
   vector<double> vel_vec;
   
   for (int i = 0; i < n; i++)
@@ -321,28 +336,33 @@ double PID::run_th(double best_err){
     i_err += error;
     p_err = error;
     
-    // Calcurate acc & vel
-    double acc = - Kp * p_err - Ki * i_err - Kd * d_err;
-    double d_acc = acc - pre_acc;
-    pre_acc = acc;
-//    if (acc > max_acc) { acc = max_acc; }
-//    if (acc < -max_acc) { acc = -max_acc; }
-    vel += acc;
+    // Calcurate th & vel
+    double throttle = - Kp * p_err - Ki * i_err - Kd * d_err;
+    double d_throttle = throttle - pre_throttle;
+    pre_throttle = throttle;
+//    if (throttle > max_throttle) { throttle = max_throttle; }
+//    if (throttle < -max_throttle) { throttle = -max_throttle; }
+    vel += throttle;
     
-    acc_vec.push_back(acc);
+    // Add current x, y and orientation
+    throttle_vec.push_back(throttle);
     vel_vec.push_back(vel);
     
-    total_error += error*error + acc*acc + d_acc*d_acc;
+    // cost function : minimize velocity error, throttle operation value and throttle operation change
+    total_error += error*error + throttle*throttle + d_throttle*d_throttle;
   }
+  // If best error updates
   if ( best_err > (total_error / n ) )
   {
     std::cout << "  x  |  y  |  orientation" << std::endl;
+    // Loging
     std::ofstream log_file;
     log_file.open("optimized_params_res_th.csv");
-    for (int i =0; i < acc_vec.size(); i++)
+    // Display
+    for (int i =0; i < throttle_vec.size(); i++)
     {
-      std::cout << acc_vec[i] << ", " << vel_vec[i] <<  std::endl;
-      log_file << acc_vec[i] << ", " << vel_vec[i] << std::endl;
+      std::cout << throttle_vec[i] << ", " << vel_vec[i] <<  std::endl;
+      log_file << throttle_vec[i] << ", " << vel_vec[i] << std::endl;
     }
   }
   return total_error / n;

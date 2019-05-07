@@ -7,6 +7,7 @@
 #include <math.h>
 #include <numeric>
 #include <fstream>
+#include <random>
 
 double mod (double n, double M);
 

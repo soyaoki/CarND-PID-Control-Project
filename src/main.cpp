@@ -39,16 +39,21 @@ int main() {
    * TODO: Initialize the pid variable.
    */
   
-  // vector <double> p {0.134611, 0.000270736, 3.05349};
+  // Define PID controller for Steer
   vector <double> p {0.0, 0.0, 0.0};
-  // Define PID controller
   pid.Init(p, true);
+  // vector <double> p  {0.203353, 0, 3.45508}; //Optimized result, Best Error: 9.86198e-11
+  // pid.Init(p, false);
+  // vector <double> p  {0.203353, 0.000001, 3.45508}; 
+  // pid.Init(p, false);  
   
+  // Define PID controller for Throttle
   PID pid_th;
   vector <double> p_th {0.0, 0.0, 0.0};
-  // Define PID controller
   pid_th.Init_th(p_th, true);
-
+  // vector <double> p_th {-0.405995, 0, 0.178931}; //Optimized result , Best Error: 17.5426
+  // pid_th.Init_th(p_th, false);
+  
   h.onMessage([&pid, &pid_th](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -84,7 +89,6 @@ int main() {
           
           // Throttle control
           double target_speed = 30.0; // mph
-          throttle_value = -0.3;
           double error = target_speed - speed;
           pid_th.UpdateError(error);
           throttle_value = pid_th.Cal_controll_val();

@@ -1,6 +1,45 @@
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 
+## Summary
+[!text](/img/img.png)
+
+[Drive on YouTube](https://youtu.be/RrcD5Yjgs3s)
+
+PID controller drove the orval cource without leaving the drivable portion of the track surface.
+
+Steering and throttle controller were inmplmented by PID method and each parameters (Kp, Ki and Kd) were optimized by TWIDDLE.
+
+Kp means P Gain, Ki means I Gain and Kd means D Gain.
+
+In Twiddle, operation values of steering angle and throttle were calculated by using CTE(Cross Track Error) and VE(Velocity Error). And cost function to minimize is shown bellow. 
+
+Not only error but also operation value and change of operation were taken into consideration to be more confortable for humans in the vehicle.
+
+$$ θ = Kp_{steer}*CTE + Ki_{steer}*ΣCTE + Kd_{steer}*ΔCTE 　(1)$$
+
+$$ Cost_{steer} = Σ(CTE^2+θ^2+Δθ^2) 　(2)$$
+
+$$ a = Kp_{throttle}*VE + Ki_{throttle}*ΣVE + Kd_{throttle}*ΔVE 　(3)$$
+
+$$ Cost_{throttle} = Σ(VE^2+a^2+Δa^2) 　(4)$$
+
+Optimized parameters are shown in following tables.
+
+|$$ Kp_{steer}$$| $$ Ki_{steer} $$| $$ Kd_{steer} $$|
+|:---:|:---:|:---:|
+|0.203353|0.0|3.45508|
+
+|$$ Kp_{throttle}$$| $$ Ki_{throttle} $$| $$ Kd_{throttle} $$|
+|:---:|:---:|:---:|
+|-0.405995|0.0|0.178931|
+
+References:
+[Controlling Self Driving Cars](https://www.youtube.com/watch?v=4Y7zG48uHRo&t=80s)
+
+Feature work:
+・MPC or G-Vectoring Controll implementation
+
 ---
 
 ## Dependencies
