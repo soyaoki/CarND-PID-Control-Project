@@ -34,6 +34,10 @@ Optimized parameters are shown in following tables.
 |:---:|:---:|:---:|
 |-0.405995|0.0|0.178931|
 
+Kp (P g ain) works to decrease CTE and VE proporting those value. But overshoot, steady state error and vibration might occur by P control.
+Then Kd (D g ain) works to decrease CTE and VE proporting those change. And PD control overcomes overshoot and vibration.
+Finally, Ki (I g ain) works to decrease steady state errors. So PID control overcomes the disadvantages of P control. (But at this time, Ki optimized as zero and vehicle drove by PD controller. )
+
 References: [Controlling Self Driving Cars](https://www.youtube.com/watch?v=4Y7zG48uHRo&t=80s)
 
 Feature work: MPC or G-Vectoring Controll implementation
