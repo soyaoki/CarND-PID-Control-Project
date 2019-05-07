@@ -2,7 +2,7 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ## Summary
-[!text](/img/img.png)
+![text](/img/img.png)
 
 [Drive on YouTube](https://youtu.be/RrcD5Yjgs3s)
 
@@ -34,11 +34,9 @@ Optimized parameters are shown in following tables.
 |:---:|:---:|:---:|
 |-0.405995|0.0|0.178931|
 
-References:
-[Controlling Self Driving Cars](https://www.youtube.com/watch?v=4Y7zG48uHRo&t=80s)
+References: [Controlling Self Driving Cars](https://www.youtube.com/watch?v=4Y7zG48uHRo&t=80s)
 
-Feature work:
-・MPC or G-Vectoring Controll implementation
+Feature work: MPC or G-Vectoring Controll implementation
 
 ---
 
