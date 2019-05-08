@@ -12,7 +12,7 @@ Steering and throttle controller were inmplmented by PID method and each paramet
 
 Kp means P Gain, Ki means I Gain and Kd means D Gain.
 
-In Twiddle, operation values of steering angle and throttle were calculated by using CTE(Cross Track Error) and VE(Velocity Error). And cost function to minimize is shown bellow. 
+In Twiddle, operation values of steering angle and throttle were calculated by using CTE(Cross Track Error) and VE(Velocity Error). And cost function for optinimizing is shown bellow. 
 
 Not only error but also operation value and change of operation were taken into consideration to be more confortable for humans in the vehicle.
 
@@ -34,9 +34,9 @@ Optimized parameters are shown in following tables.
 |:---:|:---:|:---:|
 |-0.405995|0.0|0.178931|
 
-Kp (P g ain) works to decrease CTE and VE proporting those value. But overshoot, steady state error and vibration might occur by P control.
-Then Kd (D g ain) works to decrease CTE and VE proporting those change. And PD control overcomes overshoot and vibration.
-Finally, Ki (I g ain) works to decrease steady state errors. So PID control overcomes the disadvantages of P control. (But at this time, Ki optimized as zero and vehicle drove by PD controller. )
+Kp (P gain) works to decrease CTE and VE proporting those value. But overshoot, steady state error and vibration might occur by P control.
+Then Kd (D gain) works to decrease CTE and VE proporting those change. And PD control overcomes overshoot and vibration.
+Finally, Ki (I gain) works to decrease steady state errors. So PID control overcomes the disadvantages of P control. (But at this time, Ki optimized as zero and vehicle drove by PD controller. )
 
 References: [Controlling Self Driving Cars](https://www.youtube.com/watch?v=4Y7zG48uHRo&t=80s)
 
